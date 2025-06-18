@@ -128,6 +128,9 @@ class SettingsTab(QWidget):
         self.status_label = QLabel("Статус: не смонтировано")
         main_layout.addWidget(self.status_label)
 
+        title = QLabel("<h2>Оформление</h2>")
+        main_layout.addWidget(title)
+
 
         title = QLabel("<h2>Оформление</h2>")
         main_layout.addWidget(title)
@@ -355,7 +358,7 @@ class MainTab(QWidget):
             self.copy_dir(src, os.path.join(dest, selected_game))
 
     def open_manage_dialog(self):
-        if not os.path.ismount(MOUNT_POINT):GameSync
+        if not os.path.ismount(MOUNT_POINT):
             self.settings_tab.mount_share()
             if not os.path.ismount(MOUNT_POINT):
                 return
