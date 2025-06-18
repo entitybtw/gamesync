@@ -21,20 +21,18 @@ def get_available_themes(themes_dir="themes"):
     themes.sort()
     return themes
 
-
-
 CONFIG_FILE = "config.json"
 MOUNT_POINT = "/mnt/gamesync"
 
 class PasswordDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Введите пароль sudo")
+        self.setWindowTitle("Enter sudo password")
         self.setModal(True)
         self.password = None
 
         layout = QVBoxLayout()
-        layout.addWidget(QLabel("Введите пароль для sudo:"))
+        layout.addWidget(QLabel("Enter password for sudo:"))
         self.pass_input = QLineEdit()
         self.pass_input.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addWidget(self.pass_input)
@@ -53,7 +51,7 @@ class SelectGameDialog(QDialog):
     def __init__(self, games_list, parent=None):
         themes = get_available_themes()
         super().__init__(parent)
-        self.setWindowTitle("Выберите игру для скачивания")
+        self.setWindowTitle("Select a game to download")
         self.setModal(True)
         self.selected_game = None
 
@@ -72,12 +70,10 @@ class SelectGameDialog(QDialog):
     def accept(self):
         selected_items = self.list_widget.selectedItems()
         if not selected_items:
-            QMessageBox.warning(self, "Ошибка", "Выберите игру из списка")
+            QMessageBox.warning(self, "Error", "Select a game from the list")
             return
         self.selected_game = selected_items[0].text()
         super().accept()
-
-
 
 class SettingsTab(QWidget):
     def __init__(self):
@@ -87,71 +83,65 @@ class SettingsTab(QWidget):
         main_layout.setSpacing(2)
         main_layout.setContentsMargins(0, 0, 0, 0)
 
-        title = QLabel("<h2>Настройки NAS</h2>")
+        title = QLabel("<h2>NAS Settings</h2>")
         main_layout.addWidget(title)
 
         def make_row(label_text, widget):
             row = QHBoxLayout()
             label = QLabel(label_text)
-            label.setFixedWidth(100)  # фикс ширина, чтобы ровно выровнять
+            label.setFixedWidth(100)
             row.addWidget(label)
             row.addWidget(widget)
             return row
 
         self.ip_input = QLineEdit()
-        self.ip_input.setPlaceholderText("IP адрес NAS")
-        main_layout.addLayout(make_row("IP NAS", self.ip_input))
+        self.ip_input.setPlaceholderText("NAS IP address")
+        main_layout.addLayout(make_row("NAS IP", self.ip_input))
 
         self.share_input = QLineEdit()
-        self.share_input.setPlaceholderText("Путь к шару")
-        main_layout.addLayout(make_row("Путь к NAS", self.share_input))
+        self.share_input.setPlaceholderText("Share path")
+        main_layout.addLayout(make_row("NAS Path", self.share_input))
 
         self.protocol_combo = QComboBox()
         self.protocol_combo.addItems(["nfs", "smb"])
-        main_layout.addLayout(make_row("Протокол", self.protocol_combo))
+        main_layout.addLayout(make_row("Protocol", self.protocol_combo))
 
         self.user_input = QLineEdit()
-        self.user_input.setPlaceholderText("Пользователь")
-        main_layout.addLayout(make_row("Пользователь", self.user_input))
+        self.user_input.setPlaceholderText("User")
+        main_layout.addLayout(make_row("User", self.user_input))
 
         self.pass_input = QLineEdit()
-        self.pass_input.setPlaceholderText("Пароль")
+        self.pass_input.setPlaceholderText("Password")
         self.pass_input.setEchoMode(QLineEdit.EchoMode.Password)
-        main_layout.addLayout(make_row("Пароль", self.pass_input))
+        main_layout.addLayout(make_row("Password", self.pass_input))
 
-        self.mount_btn = QPushButton("Монтировать NAS")
+        self.mount_btn = QPushButton("Mount NAS")
         main_layout.addWidget(self.mount_btn)
 
-        self.umount_btn = QPushButton("Отмонтировать NAS")
+        self.umount_btn = QPushButton("Unmount NAS")
         main_layout.addWidget(self.umount_btn)
 
-        self.status_label = QLabel("Статус: не смонтировано")
+        self.status_label = QLabel("Status: not mounted")
         main_layout.addWidget(self.status_label)
 
-        title = QLabel("<h2>Оформление</h2>")
-        main_layout.addWidget(title)
-
-
-        title = QLabel("<h2>Оформление</h2>")
+        title = QLabel("<h2>Appearance</h2>")
         main_layout.addWidget(title)
 
         self.theme_combo = QComboBox()
         themes = get_available_themes()
         self.theme_combo.addItems(themes)
-        main_layout.addLayout(make_row("Тема", self.theme_combo))
+        main_layout.addLayout(make_row("Theme", self.theme_combo))
 
-
-        self.apply_theme_btn = QPushButton("Применить тему")
+        self.apply_theme_btn = QPushButton("Apply Theme")
         main_layout.addWidget(self.apply_theme_btn)
         self.apply_theme_btn.clicked.connect(self.apply_theme)
 
-        self.save_btn = QPushButton("Сохранить настройки")
+        self.save_btn = QPushButton("Save Settings")
         main_layout.addWidget(self.save_btn)
         self.mount_btn.clicked.connect(self.mount_share)
         self.umount_btn.clicked.connect(self.umount_share)
         self.save_btn.clicked.connect(self.save_settings)
         self.load_settings()
-
 
         self.setLayout(main_layout)
         
@@ -160,11 +150,10 @@ class SettingsTab(QWidget):
         theme_path = os.path.join("themes", f"{theme_name}.qss")
         if os.path.exists(theme_path):
             with open(theme_path, "r") as f:
-                    qss = f.read()
+                qss = f.read()
             QApplication.instance().setStyleSheet(qss)
         else:
-            QMessageBox.warning(self, "Ошибка", f"Файл темы {theme_path} не найден")
-
+            QMessageBox.warning(self, "Error", f"Theme file {theme_path} not found")
 
     def load_settings(self):
         if os.path.exists(CONFIG_FILE):
@@ -191,15 +180,14 @@ class SettingsTab(QWidget):
         }
         with open(CONFIG_FILE, "w") as f:
             json.dump(cfg, f, indent=4)
-        QMessageBox.information(self, "Настройки", "Сохранено")
-
+        QMessageBox.information(self, "Settings", "Saved")
 
     def ask_sudo_password(self):
         dlg = PasswordDialog(self)
         if dlg.exec() == QDialog.DialogCode.Accepted and dlg.password:
             return dlg.password
         else:
-            QMessageBox.warning(self, "Отмена", "Пароль не введён")
+            QMessageBox.warning(self, "Cancel", "Password not entered")
             return None
 
     def run_sudo_cmd(self, cmd, sudo_pass):
@@ -219,7 +207,7 @@ class SettingsTab(QWidget):
         password = self.pass_input.text().strip()
 
         if not ip or not share:
-            QMessageBox.warning(self, "Ошибка", "IP и путь к шару обязательны")
+            QMessageBox.warning(self, "Error", "IP and share path are required")
             return
 
         sudo_pass = self.ask_sudo_password()
@@ -229,7 +217,7 @@ class SettingsTab(QWidget):
         if not os.path.exists(MOUNT_POINT):
             ret, out, err = self.run_sudo_cmd(["mkdir", "-p", MOUNT_POINT], sudo_pass)
             if ret != 0:
-                QMessageBox.critical(self, "Ошибка", f"Не могу создать точку монтирования:\n{err}")
+                QMessageBox.critical(self, "Error", f"Cannot create mount point:\n{err}")
                 return
 
         if protocol == "nfs":
@@ -244,20 +232,20 @@ class SettingsTab(QWidget):
             target = f"//{ip}/{share}"
             cmd = ["mount", "-t", "cifs", target, MOUNT_POINT, "-o", options]
         else:
-            QMessageBox.warning(self, "Ошибка", "Протокол не поддерживается")
+            QMessageBox.warning(self, "Error", "Protocol not supported")
             return
 
         ret, out, err = self.run_sudo_cmd(cmd, sudo_pass)
         if ret == 0:
-            self.status_label.setText(f"Статус: смонтировано в {MOUNT_POINT}")
-            QMessageBox.information(self, "Готово", "NAS смонтирован")
+            self.status_label.setText(f"Status: mounted at {MOUNT_POINT}")
+            QMessageBox.information(self, "Done", "NAS mounted")
         else:
-            self.status_label.setText(f"Ошибка монтирования:\n{err}")
-            QMessageBox.critical(self, "Ошибка", f"Монтирование не удалось:\n{err}")
+            self.status_label.setText(f"Mount error:\n{err}")
+            QMessageBox.critical(self, "Error", f"Mount failed:\n{err}")
 
     def umount_share(self):
         if not os.path.ismount(MOUNT_POINT):
-            QMessageBox.information(self, "Инфо", "Точка монтирования не смонтирована")
+            QMessageBox.information(self, "Info", "Mount point is not mounted")
             return
 
         sudo_pass = self.ask_sudo_password()
@@ -266,11 +254,11 @@ class SettingsTab(QWidget):
 
         ret, out, err = self.run_sudo_cmd(["umount", MOUNT_POINT], sudo_pass)
         if ret == 0:
-            self.status_label.setText("Статус: отмонтировано")
-            QMessageBox.information(self, "Готово", "Точка монтирования успешно отмонтирована")
+            self.status_label.setText("Status: unmounted")
+            QMessageBox.information(self, "Done", "Mount point successfully unmounted")
         else:
-            self.status_label.setText(f"Ошибка отмонтирования:\n{err}")
-            QMessageBox.critical(self, "Ошибка", f"Отмонтирование не удалось:\n{err}")
+            self.status_label.setText(f"Unmount error:\n{err}")
+            QMessageBox.critical(self, "Error", f"Unmount failed:\n{err}")
 
 class MainTab(QWidget):
     def __init__(self, settings_tab):
@@ -286,19 +274,19 @@ class MainTab(QWidget):
 
         path_layout = QHBoxLayout()
         self.path_input = QLineEdit()
-        self.path_input.setPlaceholderText("Выберите папку для загрузки/скачивания...")
-        browse_btn = QPushButton("Обзор")
+        self.path_input.setPlaceholderText("Select a folder for upload/download...")
+        browse_btn = QPushButton("Browse")
         browse_btn.clicked.connect(self.browse_folder)
         path_layout.addWidget(self.path_input)
         path_layout.addWidget(browse_btn)
         self.layout.addLayout(path_layout)
 
         btn_layout = QHBoxLayout()
-        upload_btn = QPushButton("⬆ Загрузить на NAS")
+        upload_btn = QPushButton("⬆ Upload to NAS")
         upload_btn.clicked.connect(self.upload_game)
-        download_btn = QPushButton("⬇ Скачать с NAS")
+        download_btn = QPushButton("⬇ Download from NAS")
         download_btn.clicked.connect(self.download_game)
-        manage_btn = QPushButton("🛠 Управление NAS")
+        manage_btn = QPushButton("🛠 Manage NAS")
         manage_btn.clicked.connect(self.open_manage_dialog)
         btn_layout.addWidget(manage_btn)
         btn_layout.addWidget(upload_btn)
@@ -311,17 +299,17 @@ class MainTab(QWidget):
         self.setLayout(self.layout)
 
     def browse_folder(self):
-        folder = QFileDialog.getExistingDirectory(self, "Выберите папку")
+        folder = QFileDialog.getExistingDirectory(self, "Select folder")
         if folder:
             self.path_input.setText(folder)
 
     def upload_game(self):
         src = self.path_input.text().strip()
         if not src or not os.path.exists(src):
-            QMessageBox.warning(self, "Ошибка", "Выберите корректную папку с игрой")
+            QMessageBox.warning(self, "Error", "Select a valid game folder")
             return
         if not os.path.ismount(MOUNT_POINT):
-            QMessageBox.warning(self, "Ошибка", f"NAS не смонтирован в {MOUNT_POINT}")
+            QMessageBox.warning(self, "Error", f"NAS not mounted at {MOUNT_POINT}")
             return
 
         sudo_pass = self.settings_tab.ask_sudo_password()
@@ -333,7 +321,6 @@ class MainTab(QWidget):
 
     def download_game(self):
         if not os.path.ismount(MOUNT_POINT):
-            # Монтируем NAS перед показом списка игр
             self.settings_tab.mount_share()
             if not os.path.ismount(MOUNT_POINT):
                 return
@@ -341,17 +328,17 @@ class MainTab(QWidget):
         try:
             games = [d for d in os.listdir(MOUNT_POINT) if os.path.isdir(os.path.join(MOUNT_POINT, d))]
         except Exception as e:
-            QMessageBox.critical(self, "Ошибка", f"Не могу получить список игр:\n{e}")
+            QMessageBox.critical(self, "Error", f"Cannot get list of games:\n{e}")
             return
 
         if not games:
-            QMessageBox.information(self, "Инфо", "На NAS нет игр для скачивания")
+            QMessageBox.information(self, "Info", "No games available on NAS")
             return
 
         dlg = SelectGameDialog(games, self)
         if dlg.exec() == QDialog.DialogCode.Accepted and dlg.selected_game:
             selected_game = dlg.selected_game
-            dest = QFileDialog.getExistingDirectory(self, "Выберите папку для скачивания")
+            dest = QFileDialog.getExistingDirectory(self, "Select folder for download")
             if not dest:
                 return
             src = os.path.join(MOUNT_POINT, selected_game)
@@ -365,12 +352,11 @@ class MainTab(QWidget):
         dlg = ManageNASDialog(self)
         dlg.exec()
 
-
     def copy_dir(self, src, dest):
         if os.path.exists(dest):
             reply = QMessageBox.question(
-                self, "Подтверждение",
-                f"Папка {dest} уже существует. Заменить?",
+                self, "Confirmation",
+                f"Folder {dest} already exists. Replace?",
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
             )
             if reply != QMessageBox.StandardButton.Yes:
@@ -378,7 +364,7 @@ class MainTab(QWidget):
             try:
                 shutil.rmtree(dest)
             except Exception as e:
-                QMessageBox.critical(self, "Ошибка", f"Не могу удалить папку: {e}")
+                QMessageBox.critical(self, "Error", f"Cannot delete folder: {e}")
                 return
         try:
             total_files = sum(len(files) for _, _, files in os.walk(src))
@@ -395,9 +381,9 @@ class MainTab(QWidget):
                     progress = int(copied_files / total_files * 100)
                     self.progress.setValue(progress)
             self.progress.setValue(100)
-            QMessageBox.information(self, "Готово", "Операция завершена")
+            QMessageBox.information(self, "Done", "Operation completed")
         except Exception as e:
-            QMessageBox.critical(self, "Ошибка", f"Ошибка копирования: {e}")
+            QMessageBox.critical(self, "Error", f"Copy error: {e}")
 
 class GameSyncApp(QWidget):
     def __init__(self):
@@ -409,8 +395,8 @@ class GameSyncApp(QWidget):
         self.settings_tab = SettingsTab()
         self.main_tab = MainTab(self.settings_tab)
 
-        self.tabs.addTab(self.main_tab, "Главная")
-        self.tabs.addTab(self.settings_tab, "Настройки")
+        self.tabs.addTab(self.main_tab, "Main")
+        self.tabs.addTab(self.settings_tab, "Settings")
 
         layout = QVBoxLayout()
         layout.addWidget(self.tabs)
@@ -419,7 +405,7 @@ class GameSyncApp(QWidget):
 class ManageNASDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Управление файлами на NAS")
+        self.setWindowTitle("Manage files on NAS")
         self.setMinimumSize(400, 300)
 
         layout = QVBoxLayout()
@@ -427,39 +413,13 @@ class ManageNASDialog(QDialog):
         layout.addWidget(self.file_list)
 
         btn_layout = QHBoxLayout()
-        self.rename_btn = QPushButton("Переименовать")
-        self.delete_btn = QPushButton("Удалить")
+        self.rename_btn = QPushButton("Rename")
+        self.delete_btn = QPushButton("Delete")
         btn_layout.addWidget(self.rename_btn)
         btn_layout.addWidget(self.delete_btn)
         layout.addLayout(btn_layout)
-
         self.setLayout(layout)
 
-        self.rename_btn.clicked.connect(self.rename_item)
-        self.delete_btn.clicked.connect(self.delete_item)
-
-        self.load_files()
-
-    def load_files(self):
-        self.file_list.clear()
-        try:
-            for item in os.listdir(MOUNT_POINT):
-                self.file_list.addItem(item)
-        except Exception as e:
-            QMessageBox.critical(self, "Ошибка", f"Не могу прочитать NAS:\n{e}")
-
-    def rename_item(self):
-        item = self.file_list.currentItem()
-        if not item:
-            return
-        old_name = item.text()
-        new_name, ok = QInputDialog.getText(self, "Переименовать", f"Новое имя для: {old_name}")
-        if ok and new_name:
-            try:
-                os.rename(os.path.join(MOUNT_POINT, old_name), os.path.join(MOUNT_POINT, new_name))
-                self.load_files()
-            except Exception as e:
-                QMessageBox.critical(self, "Ошибка", f"Ошибка переименования:\n{e}")
 
     def delete_item(self):
         item = self.file_list.currentItem()
