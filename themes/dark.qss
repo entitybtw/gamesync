@@ -1,0 +1,55 @@
+/* Минималистичная тёмная тема */
+
+QWidget {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 11pt;
+}
+
+QPushButton {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+QPushButton:hover {
+    background-color: #333333;
+}
+
+QPushButton:pressed {
+    background-color: #555555;
+}
+
+QLineEdit, QTextEdit, QComboBox {
+    background-color: #1f1f1f;
+    border: 1px solid #333333;
+    border-radius: 4px;
+    color: #e0e0e0;
+    padding: 4px;
+}
+
+QLabel#title {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #bb86fc;
+}
+
+QScrollBar:vertical {
+    background: #121212;
+    width: 10px;
+    margin: 0px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical {
+    background: #333333;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #555555;
+}
